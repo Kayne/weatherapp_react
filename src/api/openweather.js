@@ -1,6 +1,5 @@
 import axios from 'axios'
 
-console.log(import.meta.env)
 const API_KEY = import.meta.env.VITE_OPEN_WEATHER_API_KEY
 const BASE = 'https://api.openweathermap.org/data/2.5'
 const DEFAULT_UNITS = 'metric'
