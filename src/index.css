@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+:root {
+    /* Text + link palette tuned for blue gradients */
+    --text: #eef2ff;         /* near-white, good contrast on dark/blue backgrounds */
+    --muted: rgba(238,242,255,0.95);
+    --link: #bfdbfe;         /* bright sky blue (good accent) */
+    --link-hover: #bdeafe;   /* lighter on hover */
+    --link-focus-ring: rgba(125,211,252,0.18);
+}
+
+html,
+body,
+#root {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+html, body {
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 50%, #60a5fa 100%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.45;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text); /* keep readable on blue background */
+    margin: 0 0 0.5rem 0;
+    line-height: 1.15;
+    font-weight: 600;
+    text-shadow: 0 1px 0 rgba(2,6,23,0.25);
+}
+
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.125rem; }
+
+/* Paragraphs and small text: increased contrast and spacing */
+small {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin: 0 0 0.75rem 0;
+}
+
+/* Links: clear and accessible */
+a {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 120ms ease, box-shadow 120ms ease;
+}
+a:hover { color: var(--link-hover); }
+a:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px var(--link-focus-ring);
+    border-radius: 4px;
+}
+
+/* Form controls: larger hit targets and readable text */
+input, button, select, textarea {
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+button {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:active, button:focus {
+    outline: 2px solid rgba(0,0,0,0.08);
+}
+
+.city-list {
+    max-width: 1100px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(2,6,23,0.55);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
+/* Inner content of city list: better spacing and readable cards */
+.city-list .header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.city-list .card {
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(255,255,255,0.04);
+    gap: 1rem;
+}
+
+.city-list .city-name {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.city-list .city-meta {
+    color: rgb(238,242,255);
+    font-size: 1.05rem;
+}
+
+.font-bold {
+    font-weight: 800;
+}
+
+@media (max-width: 640px) {
+    .city-list {
+        width: 95%;
+        padding: 1rem;
+        min-height: 50vh;
+    }
+}
