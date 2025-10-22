@@ -112,7 +112,7 @@ export default function CityDetails() {
                             <div>Ciśnienie: <strong>{item.main.pressure} hPa</strong></div>
                             <div>Zachmurzenie: <strong>{item.clouds?.all}%</strong></div>
                             <div>Opady (3h): <strong>{item.rain?.['3h'] ?? 0} mm</strong></div>
-                            <div>Wiatr: <strong>{item.wind.speed} {unitToOWMUnit(unit) == 'metric' ? 'm/s' : 'mph'}</strong> ({getWindDirection(current.wind.deg)})</div>
+                            <div>Wiatr: <strong>{item.wind.speed} {unitToOWMUnit(unit) == 'metric' ? 'm/s' : 'mph'}</strong> ({getWindDirection(item.wind.deg)})</div>
                           </div>
                         </div>
                       </div>
