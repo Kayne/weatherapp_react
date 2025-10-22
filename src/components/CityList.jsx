@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react'
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import CityCard from './CityCard'
 import SearchForm from './SearchForm'
 import { fetchCurrentByCityName } from '../api/openweather'
@@ -16,6 +16,12 @@ export default function CityList() {
     const [cities, setCities] = useState(storedCities || [])
     const list = useMemo(() => cities, [cities])
 
+    const [error, setError] = useState(null)
+    const errorTimer = useRef(null)
+
+    useEffect(() => {
+        return () => { if (errorTimer.current) clearTimeout(errorTimer.current) }
+    }, [])
 
     const loadInitial = useCallback(async () => {
         const u = unitToOWMUnit(unit)
@@ -51,17 +57,45 @@ export default function CityList() {
 
 
     const onSearch = useCallback(async (q) => {
-        const u = unitToOWMUnit(unit)
-        const r = await fetchCurrentByCityName(q, u)
-        const newCity = { id: r.id, name: r.name, temp: Math.round(r.main.temp), weather: r.weather[0].main, icon: r.weather[0].icon, coords: r.coord }
-        setCities(prev => {
-            const exists = prev.some(c => c.id === newCity.id || c.name.toLowerCase() === newCity.name.toLowerCase())
-            if (exists) return prev
-            const next = [newCity, ...prev]
-            setStoredCities(next)
-            return next
-        })
-    }, [unit, setStoredCities])
+        if (errorTimer.current) {
+            clearTimeout(errorTimer.current)
+            errorTimer.current = null
+        }
+        setError(null)
+
+        const name = q.trim()
+        const isDuplicated = cities.some(c => c.name.toLowerCase() === name.toLowerCase())
+        if (isDuplicated) {
+            setError('Miasto już jest na liście')
+            errorTimer.current = setTimeout(() => setError(null), 3000)
+            return
+        }
+
+        try {
+            const u = unitToOWMUnit(unit)
+            const r = await fetchCurrentByCityName(q, u)
+            if (!r || !r.id) {
+                setError('Nie znaleziono miasta')
+                errorTimer.current = setTimeout(() => setError(null), 3000)
+                return
+            }
+
+            const newCity = { id: r.id, name: r.name, temp: Math.round(r.main.temp), weather: r.weather[0].main, icon: r.weather[0].icon, coords: r.coord }
+            setCities(prev => {
+                // Warsaw i Warszawa zwraca to samo miasto a isDuplicated check wyżej tego nie wyłapuje
+                const exists = prev.some(c => c.id === newCity.id || c.name.toLowerCase() === newCity.name.toLowerCase())
+                if (exists) return prev
+                const next = [newCity, ...prev]
+                setStoredCities(next)
+                return next
+            })
+            setError(null)
+        } catch (err) {
+            console.error(err)
+            setError(err.message || 'Błąd podczas dodawania miasta')
+            errorTimer.current = setTimeout(() => setError(null), 3000)
+        }
+    }, [unit, setStoredCities, cities])
 
     const removeCity = useCallback((id) => {
         setCities(prev => {
@@ -75,6 +109,11 @@ export default function CityList() {
     return (
         <div className="city-list">
             <SearchForm onSearch={onSearch} />
+            {error && (
+                <div className="mt-3 p-2 rounded bg-red-900 bg-opacity-40 text-red-100 text-sm">
+                    {error}
+                </div>
+            )}
             <div className="grid gap-3 mt-4">
                 {list.map(c => <CityCard key={c.id} city={c} onRemove={() => removeCity(c.id)} />)}
             </div>
